@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CMS Studio & Article Manager | Icons of Tech Magazine</title>
+  <meta name="description" content="Publish, edit, and manage articles for Icons of Tech digital magazine." />
+  <meta name="theme-color" content="#000000" />
+
+  <!-- Google Fonts: Newsreader (Editorial Serif) & Inter (Clean UI Sans) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&display=swap"
+    rel="stylesheet" />
+
+  <!-- Vanilla CSS Stylesheet -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body class="bg-paper text-ink antialiased flex flex-col min-h-screen">
+
+  <!-- Issue Bar -->
+  <div
+    class="border-b border-ink-10 bg-paper-dark py-2 px-4 text-xs font-ui tracking-wider text-ink-60 text-center flex items-center justify-between">
+    <a href="index.html" class="hover:text-editorial transition-colors flex items-center gap-1 font-medium">
+      ← Return to Icons of Tech Magazine
+    </a>
+    <span class="font-semibold text-editorial uppercase tracking-widest hidden sm:inline">CMS Publisher & Content
+      Manager</span>
+    <button id="theme-toggle"
+      class="hover:text-ink transition-colors cursor-pointer flex items-center gap-1.5 font-medium"
+      title="Toggle Light/Dark Theme">
+      <svg class="w-3.5 h-3.5 text-editorial" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z">
+        </path>
+      </svg>
+      <span id="theme-text">Theme</span>
+    </button>
+  </div>
+
+  <!-- Header -->
+  <header class="sticky top-0 z-40 bg-paper/95 backdrop-blur border-b border-ink-15">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+
+        <div class="flex items-center gap-4">
+          <a href="index.html"
+            class="font-ui text-xs font-semibold uppercase tracking-wider text-ink-70 hover:text-editorial transition-colors flex items-center gap-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+              </path>
+            </svg>
+            View Live Magazine
+          </a>
+        </div>
+
+        <!-- Center Brand Logo -->
+        <a href="index.html" class="brand-logo group flex items-center gap-1.5 text-center">
+          <span class="font-ui font-black text-2xl sm:text-3xl tracking-tight text-ink">ICONS</span>
+          <span
+            class="font-serif italic font-normal text-xl sm:text-2xl text-chrome-dark group-hover:text-editorial transition-colors px-0.5">of</span>
+          <span class="font-ui font-bold text-2xl sm:text-3xl tracking-tight text-ink">TECH</span>
+        </a>
+
+        <div class="flex items-center gap-3">
+          <a href="#manager-section"
+            class="font-ui text-xs font-bold uppercase tracking-wider text-ink hover:text-editorial transition-colors flex items-center gap-1 border border-ink-20 px-3 py-1.5 rounded-full">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+              </path>
+            </svg>
+            Article Index (<span id="header-article-count">0</span>)
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN PUBLISH & MANAGER CONTAINER -->
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-grow w-full space-y-16">
+
+    <!-- SECTION 1: EDITOR FORM (Create or Edit) -->
+    <section id="editor-section" class="space-y-8 animate-fade-in">
+
+      <div
+        class="border-b border-ink-15 pb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div class="space-y-2">
+          <div class="flex items-center gap-2">
+            <span id="form-mode-badge"
+              class="font-ui text-xs uppercase tracking-[0.25em] font-bold text-editorial bg-editorial/10 px-2.5 py-1 rounded">CREATE
+              MODE</span>
+            <span class="text-ink-40">·</span>
+            <span class="font-ui text-xs text-ink-60">Editorial CMS</span>
+          </div>
+          <h1 id="form-main-title" class="font-serif text-3xl sm:text-4xl font-bold text-ink">
+            Publish a New Article
+          </h1>
+          <p id="form-subtitle" class="font-serif text-base text-ink-60">
+            Fill out article details below to publish directly onto Icons of Tech.
+          </p>
+        </div>
+
+        <button id="reset-form-btn" onclick="resetFormToCreateMode()"
+          class="hidden font-ui text-xs font-bold uppercase tracking-wider bg-ink-10 hover:bg-ink hover:text-paper text-ink px-4 py-2 rounded-lg transition-all flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+          </svg>
+          Switch to Create New
+        </button>
+      </div>
+
+      <form id="standalone-publish-form"
+        class="space-y-6 bg-paper-card border border-ink-15 p-6 sm:p-10 rounded-xl shadow-lg relative">
+        <input type="hidden" id="editing-article-id" value="" />
+
+        <!-- Title Input -->
+        <div class="space-y-2">
+          <label for="pub-title" class="block font-ui text-xs uppercase tracking-wider font-bold text-ink">
+            Article Title <span class="text-editorial">*</span>
+          </label>
+          <input type="text" id="pub-title" required placeholder="e.g. The Quiet Revolution of Autonomous Cinema"
+            class="w-full bg-paper border border-ink-20 px-4 py-3 font-serif text-xl text-ink focus:outline-none focus:border-editorial rounded-lg placeholder-ink-40 shadow-inner" />
+        </div>
+
+        <!-- Subtitle / Excerpt -->
+        <div class="space-y-2">
+          <label for="pub-subtitle" class="block font-ui text-xs uppercase tracking-wider font-bold text-ink">
+            Subtitle / Excerpt <span class="text-editorial">*</span>
+          </label>
+          <input type="text" id="pub-subtitle" required
+            placeholder="e.g. On synthetic actors, generative set design, and the directors quietly shifting the craft."
+            class="w-full bg-paper border border-ink-20 px-4 py-3 font-serif text-base text-ink focus:outline-none focus:border-editorial rounded-lg placeholder-ink-40 shadow-inner" />
+        </div>
+
+        <!-- Meta Grid: Category, Author, Read Time -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+
+          <div class="space-y-2">
+            <label for="pub-category" class="block font-ui text-xs uppercase tracking-wider font-bold text-ink">
+              Category <span class="text-editorial">*</span>
+            </label>
+            <select id="pub-category" required
+              class="w-full bg-paper border border-ink-20 px-4 py-3 font-ui text-sm text-ink focus:outline-none focus:border-editorial rounded-lg">
+              <option value="AI">AI</option>
+              <option value="Film" selected>Film</option>
+              <option value="Tech">Tech</option>
+              <option value="Ambition">Ambition</option>
+              <option value="Culture">Culture</option>
+              <option value="Interviews">Interviews</option>
+              <option value="Business">Business</option>
+            </select>
+          </div>
+
+          <div class="space-y-2">
+            <label for="pub-author" class="block font-ui text-xs uppercase tracking-wider font-bold text-ink">
+              Author Name <span class="text-editorial">*</span>
+            </label>
+            <input type="text" id="pub-author" required placeholder="e.g. Soumya Vijay"
+              class="w-full bg-paper border border-ink-20 px-4 py-3 font-ui text-sm text-ink focus:outline-none focus:border-editorial rounded-lg placeholder-ink-40 shadow-inner" />
+          </div>
+
+          <div class="space-y-2">
+            <label for="pub-readtime" class="block font-ui text-xs uppercase tracking-wider font-bold text-ink">
+              Read Time
+            </label>
+            <input type="text" id="pub-readtime" placeholder="3 min read" value="3 min read"
+              class="w-full bg-paper border border-ink-20 px-4 py-3 font-ui text-sm text-ink focus:outline-none focus:border-editorial rounded-lg placeholder-ink-40 shadow-inner" />
+          </div>
+
+        </div>
+
+        <!-- Content Body (Textarea) -->
+        <div class="space-y-2">
+          <label for="pub-content" class="block font-ui text-xs uppercase tracking-wider font-bold text-ink">
+            Article Content <span class="text-editorial">*</span>
+          </label>
+          <p class="font-ui text-xs text-ink-50">Separate paragraphs with a blank line (double enter).</p>
+          <textarea id="pub-content" required rows="10"
+            placeholder="Type or paste the full article body here...\n\nSecond paragraph content goes here...\n\nThird paragraph content goes here..."
+            class="w-full bg-paper border border-ink-20 px-4 py-3 font-serif text-lg text-ink focus:outline-none focus:border-editorial rounded-lg placeholder-ink-40 leading-relaxed shadow-inner"></textarea>
+        </div>
+
+        <!-- Tags Input -->
+        <div class="space-y-2">
+          <label for="pub-tags" class="block font-ui text-xs uppercase tracking-wider font-bold text-ink">
+            Tags (comma separated)
+          </label>
+          <input type="text" id="pub-tags" placeholder="cinema, ai, leadership, future"
+            class="w-full bg-paper border border-ink-20 px-4 py-3 font-ui text-sm text-ink focus:outline-none focus:border-editorial rounded-lg placeholder-ink-40 shadow-inner" />
+        </div>
+
+        <!-- Hero Image Input -->
+        <div class="space-y-2">
+          <label for="pub-hero-file" class="block font-ui text-xs uppercase tracking-wider font-bold text-ink">
+            Upload Custom Hero Image (Local storage + Google sheet)
+          </label>
+
+          <input type="file" id="pub-hero-file" accept="image/*"
+            class="w-full bg-paper border border-ink-20 px-4 py-3 font-ui text-sm text-ink focus:outline-none focus:border-editorial rounded-lg placeholder-ink-40 shadow-inner file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-editorial/10 file:text-editorial hover:file:bg-editorial hover:file:text-white" />
+
+          <!-- Hidden fallback for edit mode -->
+          <input type="hidden" id="pub-hero" value="" />
+          <p class="font-ui text-[10px] text-ink-50 italic">Make sure to run the upload server (node upload_server.js)
+            in your terminal.</p>
+        </div>
+
+        <!-- Checkbox Options -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-8 pt-2 border-t border-ink-10">
+          <label class="flex items-center gap-2 cursor-pointer font-ui text-xs font-semibold text-ink">
+            <input type="checkbox" id="pub-featured" class="w-4 h-4 accent-editorial rounded cursor-pointer" />
+            <span>Feature on Magazine Homepage</span>
+          </label>
+
+          <label class="flex items-center gap-2 cursor-pointer font-ui text-xs font-semibold text-ink">
+            <input type="checkbox" id="pub-cover" class="w-4 h-4 accent-editorial rounded cursor-pointer" />
+            <span>Set as Issue Cover Story</span>
+          </label>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="pt-6 border-t border-ink-15 flex items-center justify-between gap-4">
+          <button type="button" onclick="resetFormToCreateMode()"
+            class="font-ui text-xs font-semibold uppercase tracking-wider text-ink-60 hover:text-ink">
+            Clear Form
+          </button>
+
+          <button type="submit" id="submit-btn"
+            class="bg-editorial hover:bg-ink text-paper font-ui text-xs font-bold uppercase tracking-widest px-8 py-4 rounded-lg shadow-lg hover:shadow-xl transition-all cursor-pointer flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span id="submit-btn-text">Publish Article Now</span>
+          </button>
+        </div>
+
+      </form>
+    </section>
+
+    <!-- SECTION 2: PUBLISHED ARTICLES MANAGEMENT INDEX (Edit & Delete) -->
+    <section id="manager-section" class="space-y-6 border-t border-ink-15 pt-12">
+      <div
+        class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-ink-15 pb-4">
+        <div>
+          <span class="font-ui text-xs uppercase tracking-[0.25em] font-bold text-editorial">CONTENT MANAGEMENT</span>
+          <h2 class="font-serif text-3xl font-bold text-ink">Published Articles (<span
+              id="total-articles-count">0</span>)</h2>
+          <p class="font-serif text-sm text-ink-60">Edit or delete any article currently active on the magazine.</p>
+        </div>
+
+        <div class="w-full sm:w-72">
+          <input type="text" id="manager-search-input" placeholder="Search articles by title or author..."
+            oninput="renderArticlesManagerList()"
+            class="w-full bg-paper-card border border-ink-20 px-3 py-2 text-xs font-ui text-ink rounded-lg focus:outline-none focus:border-editorial placeholder-ink-40" />
+        </div>
+      </div>
+
+      <!-- Articles Manager Table / Cards List -->
+      <div id="articles-manager-container" class="space-y-4">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Delete Confirmation Modal -->
+  <div id="delete-modal"
+    class="fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200 flex items-center justify-center p-4">
+    <div
+      class="bg-paper-card border border-ink-15 p-6 rounded-xl max-w-md w-full space-y-4 shadow-2xl transform scale-95 transition-transform duration-200"
+      id="delete-modal-panel">
+      <div class="space-y-2">
+        <h3 class="font-serif text-2xl font-bold text-ink">Delete Article?</h3>
+        <p class="font-serif text-sm text-ink-70" id="delete-modal-text">
+          Are you sure you want to delete this article? This action will remove it from the magazine.
+        </p>
+      </div>
+      <div class="flex items-center justify-end gap-3 pt-4 border-t border-ink-10">
+        <button onclick="closeDeleteModal()"
+          class="font-ui text-xs font-semibold uppercase tracking-wider text-ink-60 hover:text-ink px-4 py-2">
+          Cancel
+        </button>
+        <button id="confirm-delete-btn"
+          class="bg-red-600 hover:bg-red-700 text-white font-ui text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-lg shadow">
+          Confirm Delete
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- Footer -->
+  <footer class="bg-paper border-t border-ink-10 py-6 text-center text-xs font-ui text-ink-50 mt-auto">
+    © 2026 Icons of Tech Magazine · CMS Publisher & Article Manager Studio
+  </footer>
+
+  <script>
+    // Google Sheets Database API URL
+    const GOOGLE_SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbyjUp78QoFPbTgEarz7uUTqvGJSWIfqkhB3Bd6A4HKWy-8-U5sDrS1Hnh5-56ZKifd2Eg/exec';
+
+    // Default Seed Articles Database
+    const DEFAULT_ARTICLES = [
+      {
+        id: 'tech-executive-movie-soumya-vijay',
+        title: 'The Tech Executive Who Dared to Make a Movie',
+        subtitle: 'Why Soumya Vijay\'s journey matters far beyond Hollywood.',
+        category: 'Interviews',
+        isCoverStory: true,
+        author: 'Icons of Tech Editorial',
+        date: 'June 26, 2026',
+        readTime: '3 min read',
+        tags: ['cover-story', 'soumya-vijay', 'women-in-tech', 'film', 'ambition'],
+        excerpt: 'Most people spend their lives choosing. Logic or creativity. Career or passion. Stability or risk. Technology or art. Soumya Vijay never accepted that premise.',
+        content: [
+          `Most people spend their lives choosing. Logic or creativity. Career or passion. Stability or risk. Technology or art. Society tells us that excellence demands specialization. Pick a lane. Stay in it. Become known for one thing.`,
+          `Soumya Vijay never accepted that premise.`,
+          `For years, she built her career at the forefront of technology, navigating some of the most transformative waves in modern business. From cloud computing to artificial intelligence, she mastered the complex mechanics of corporate leadership, execution, and strategy. By every conventional measure, she had already succeeded. And then she did something unconventional. She made a movie.`,
+          `Not because it was the logical next step. Not because it was safe. But because inside the rigorous, data-driven world of tech, she kept alive a second fire: a deep, unrelenting commitment to storytelling.`,
+          `Walking onto a film set as a producer for the first time is not so different from launching an ambitious software product. Both demand vision, relentless execution, resource allocation under tight constraints, and an extraordinary capacity to manage creative energy. Yet cinema carries a vulnerability that software rarely requires. On screen, there is nowhere to hide.`,
+          `What makes Soumya Vijay’s story so resonant is not just the film itself, but what her journey represents for a new generation of leaders. We are entering an era where the boundary between technology and culture is dissolving. The leaders who will define the next decade are not those who confine themselves to a single discipline, but those who cross borders with conviction.`,
+          `"I never viewed tech and cinema as opposing forces," Vijay reflects. "Tech is about engineering human capability; cinema is about engineering human emotion. If you respect both crafts, they feed off each other."`,
+          `Her story is a testament to the power of refusal—refusing to let a title define your boundaries, refusing to flatten your ambition to fit a corporate slide deck, and having the courage to step onto a dynamic new stage when comfort would have been easier.`
+        ]
+      },
+      {
+        id: 'what-the-museum-knows-that-the-feed-doesnt',
+        title: 'What the Museum Knows That the Feed Doesn\'t',
+        subtitle: 'On taste, scarcity, and the strange revival of slow culture.',
+        category: 'Culture',
+        isFeatured: true,
+        author: 'Imogen Wales',
+        date: 'June 26, 2026',
+        readTime: '1 min read',
+        tags: ['culture', 'taste', 'museums', 'art'],
+        excerpt: 'A generation that was supposed to have its attention permanently disassembled is, in small but measurable ways, opting back into forms of culture that demand patience.',
+        content: [
+          `This is not nostalgia. It is something stranger. A generation that was supposed to have its attention permanently disassembled is, in small but measurable ways, opting back into forms of culture that demand patience.`,
+          `Museum attendance, opera subscriptions, hardcover sales of long literary novels, the return of the long-form essay — none of these are reaching the volumes of their mid-century peaks, but they are no longer dying. The line that bottomed out in the late 2010s has, very quietly, begun to climb.`,
+          `"The feed gives you novelty," a senior curator told me. "It cannot give you depth. People are slowly figuring that out."`
+        ]
+      },
+      {
+        id: 'the-end-of-the-growth-at-all-costs-decade',
+        title: 'The End of the Growth-at-All-Costs Decade',
+        subtitle: 'Capital is cheap again — but the companies being built look almost nothing like the ones that defined the last cycle.',
+        category: 'Business',
+        isFeatured: true,
+        author: 'Adam Reyes',
+        date: 'June 26, 2026',
+        readTime: '2 min read',
+        tags: ['business', 'venture', 'startups', 'capital'],
+        excerpt: 'The playbook of the previous decade — raise, spend, grow, exit — is no longer the dominant playbook. It is one option, among several.',
+        content: [
+          `For most of the 2010s, the dominant question in startup boardrooms was a variation of the same one: how can we grow faster? The cost of capital was effectively zero, and market share was treated as the only defensive moat that mattered.`,
+          `That era is over. Not because the money is gone — the money is not gone — but because the discipline around it has changed.`
+        ]
+      },
+      {
+        id: 'the-new-rules-of-a-multidimensional-career',
+        title: 'The New Rules of a Multidimensional Career',
+        subtitle: 'What people who refuse to choose one thing have learned about how to do more than one thing well.',
+        category: 'Ambition',
+        author: 'Sara Kahn',
+        date: 'June 26, 2026',
+        readTime: '2 min read',
+        tags: ['careers', 'ambition', 'polymath', 'focus'],
+        excerpt: 'The polymath has been written about so often that the word itself now arrives with a smirk.',
+        content: [
+          `The polymath has been written about so often, and so badly, that the word itself now arrives with a slight smirk. The image is of someone who is good at everything and serious about nothing. A dilettante in a nice sweater.`,
+          `The people I spent the past year talking to do not look like that. They look, mostly, like people who decided at some point that the standard career — one ladder, climbed slowly, in one industry — was not going to be enough.`
+        ]
+      },
+      {
+        id: 'the-founder-who-builds-only-when-bored',
+        title: 'The Founder Who Builds Only When Bored',
+        subtitle: 'Reena Mehta on patience, conviction, and the underrated discipline of doing nothing.',
+        category: 'Interviews',
+        author: 'Sara Kahn',
+        date: 'June 26, 2026',
+        readTime: '2 min read',
+        tags: ['founders', 'business', 'interview', 'patience'],
+        excerpt: 'Reena Mehta has started four companies. Three worked.',
+        content: [
+          `Reena Mehta has started four companies. Three of them worked. She is forty-one years old, lives in a modest apartment in Brooklyn, and has spent close to a third of her working life doing what she calls "nothing in particular."`
+        ]
+      },
+      {
+        id: 'the-platform-shift-nobody-is-talking-about',
+        title: 'The Platform Shift Nobody Is Talking About',
+        subtitle: 'Browsers are turning into operating systems. The implications are larger than the noise suggests.',
+        category: 'Tech',
+        author: 'Adam Reyes',
+        date: 'June 26, 2026',
+        readTime: '2 min read',
+        tags: ['tech', 'platforms', 'browsers', 'software'],
+        excerpt: 'For three decades, consumer software relied on a basic division of labor.',
+        content: [
+          `For three decades, consumer software has relied on a basic division of labor: the operating system handles the hardware, while applications handle the user.`
+        ]
+      },
+      {
+        id: 'the-second-act-of-the-indie-director',
+        title: 'The Second Act of the Indie Director',
+        subtitle: 'Streaming flattened cinema. A small group of filmmakers is trying to give it dimension back.',
+        category: 'Film',
+        author: 'Léa Marchand',
+        date: 'June 26, 2026',
+        readTime: '1 min read',
+        tags: ['film', 'directors', 'indie', 'cinema'],
+        excerpt: 'For most of the past decade, the conventional wisdom about independent film was that it was over.',
+        content: [
+          `For most of the past decade, the conventional wisdom about independent film was that it was over. The middle had collapsed.`
+        ]
+      },
+      {
+        id: 'the-quiet-rewiring-of-the-research-lab',
+        title: 'The Quiet Rewiring of the Research Lab',
+        subtitle: 'Inside the labs where AI is no longer the subject of study but the laboratory itself.',
+        category: 'AI',
+        author: 'Daniel Okafor',
+        date: 'June 26, 2026',
+        readTime: '2 min read',
+        tags: ['ai', 'science', 'research', 'future'],
+        excerpt: 'In the past two years, AI tools have begun acting as collaborators.',
+        content: [
+          `The lab looks ordinary. White benches, a fume hood, a centrifuge that wheezes when the building's air conditioning cuts out.`
+        ]
+      }
+    ];
+
+    let pendingDeleteId = null;
+
+    // Theme Setup
+    const theme = localStorage.getItem('iot_theme') || 'light';
+    document.documentElement.setAttribute('data-theme', theme);
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('iot_theme', next);
+    });
+
+    // Helper to get merged articles
+    function getAllActiveArticles() {
+      const customArticles = JSON.parse(localStorage.getItem('iot_custom_articles') || '[]');
+      const deletedIds = JSON.parse(localStorage.getItem('iot_deleted_article_ids') || '[]');
+
+      // Clone defaults
+      const combined = JSON.parse(JSON.stringify(DEFAULT_ARTICLES));
+
+      // Overwrite or append custom articles
+      customArticles.forEach(custom => {
+        const idx = combined.findIndex(a => a.id === custom.id);
+        if (idx > -1) {
+          combined[idx] = custom;
+        } else {
+          combined.unshift(custom);
+        }
+      });
+
+      // Filter out deleted
+      return combined.filter(a => !deletedIds.includes(a.id));
+    }
+
+    // Render Articles Manager List
+    function renderArticlesManagerList() {
+      const container = document.getElementById('articles-manager-container');
+      const searchQuery = (document.getElementById('manager-search-input')?.value || '').toLowerCase().trim();
+      if (!container) return;
+
+      const articles = getAllActiveArticles();
+
+      // Update counters
+      document.getElementById('header-article-count').textContent = articles.length;
+      document.getElementById('total-articles-count').textContent = articles.length;
+
+      // Filter
+      const filtered = articles.filter(a =>
+        !searchQuery ||
+        a.title.toLowerCase().includes(searchQuery) ||
+        a.author.toLowerCase().includes(searchQuery) ||
+        a.category.toLowerCase().includes(searchQuery)
+      );
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="bg-paper-card border border-ink-15 p-8 rounded-xl text-center text-ink-50 font-serif italic">
+            No articles found matching your search.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(article => `
+        <div class="bg-paper-card border border-ink-15 p-5 rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all hover:border-ink-30">
+          <div class="space-y-1 max-w-2xl">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="font-ui text-[10px] uppercase tracking-widest text-editorial font-bold bg-editorial/10 px-2 py-0.5 rounded">
+                ${article.category}
+              </span>
+              ${article.isCoverStory ? `<span class="font-ui text-[9px] uppercase tracking-wider font-bold bg-amber-500/20 text-amber-600 px-2 py-0.5 rounded">COVER STORY</span>` : ''}
+              ${article.isFeatured ? `<span class="font-ui text-[9px] uppercase tracking-wider font-bold bg-blue-500/20 text-blue-600 px-2 py-0.5 rounded">FEATURED</span>` : ''}
+              <span class="font-ui text-xs text-ink-40">· Published ${article.date}</span>
+            </div>
+            
+            <h3 class="font-serif text-lg sm:text-xl font-bold text-ink leading-snug">
+              ${article.title}
+            </h3>
+            
+            <p class="font-serif text-xs text-ink-60 line-clamp-1">
+              ${article.subtitle}
+            </p>
+            <div class="font-ui text-xs text-ink-50">By <span class="text-ink font-semibold">${article.author}</span> · ${article.readTime}</div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex items-center gap-2 pt-2 md:pt-0 border-t md:border-t-0 border-ink-10">
+            
+            <button 
+              onclick="editArticle('${article.id}')"
+              class="bg-ink-10 hover:bg-editorial hover:text-paper text-ink font-ui text-xs font-semibold uppercase tracking-wider px-3.5 py-2 rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer"
+              title="Edit Article"
+            >
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+              <span>Edit</span>
+            </button>
+
+            <button 
+              onclick="openDeleteModal('${article.id}', '${article.title.replace(/'/g, "\\'")}')"
+              class="bg-red-500/10 hover:bg-red-600 hover:text-white text-red-600 font-ui text-xs font-semibold uppercase tracking-wider px-3.5 py-2 rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer"
+              title="Delete Article"
+            >
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+              <span>Delete</span>
+            </button>
+
+            <a 
+              href="index.html#article/${article.id}" 
+              target="_blank"
+              class="border border-ink-20 hover:border-ink text-ink font-ui text-xs font-semibold uppercase tracking-wider px-3.5 py-2 rounded-lg transition-colors flex items-center gap-1"
+              title="View Article Live"
+            >
+              <span>View</span>
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+            </a>
+
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Edit Article Action
+    function editArticle(articleId) {
+      const articles = getAllActiveArticles();
+      const article = articles.find(a => a.id === articleId);
+      if (!article) return;
+
+      // Populate form
+      document.getElementById('editing-article-id').value = article.id;
+      document.getElementById('pub-title').value = article.title;
+      document.getElementById('pub-subtitle').value = article.subtitle;
+      document.getElementById('pub-category').value = article.category;
+      document.getElementById('pub-author').value = article.author;
+      document.getElementById('pub-readtime').value = article.readTime || '3 min read';
+      document.getElementById('pub-content').value = Array.isArray(article.content) ? article.content.join('\n\n') : article.content;
+      document.getElementById('pub-tags').value = article.tags ? article.tags.join(', ') : '';
+      document.getElementById('pub-hero').value = article.heroImage || '';
+      document.getElementById('pub-featured').checked = !!article.isFeatured;
+      document.getElementById('pub-cover').checked = !!article.isCoverStory;
+
+      // Update Form Headers & Buttons
+      document.getElementById('form-mode-badge').textContent = 'EDIT MODE';
+      document.getElementById('form-mode-badge').classList.replace('bg-editorial/10', 'bg-amber-500/20');
+      document.getElementById('form-mode-badge').classList.replace('text-editorial', 'text-amber-600');
+      document.getElementById('form-main-title').textContent = `Editing: ${article.title}`;
+      document.getElementById('form-subtitle').textContent = `Modify fields below and click Update Story to save changes.`;
+      document.getElementById('submit-btn-text').textContent = 'Update & Save Story';
+      document.getElementById('reset-form-btn').classList.remove('hidden');
+
+      // Scroll smoothly up to Editor section
+      document.getElementById('editor-section').scrollIntoView({ behavior: 'smooth' });
+      showToast('✏️ Article loaded into editor for editing');
+    }
+
+    // Reset Form back to Create Mode
+    function resetFormToCreateMode() {
+      document.getElementById('standalone-publish-form').reset();
+      document.getElementById('editing-article-id').value = '';
+
+      document.getElementById('form-mode-badge').textContent = 'CREATE MODE';
+      document.getElementById('form-mode-badge').className = 'font-ui text-xs uppercase tracking-[0.25em] font-bold text-editorial bg-editorial/10 px-2.5 py-1 rounded';
+      document.getElementById('form-main-title').textContent = 'Publish a New Article';
+      document.getElementById('form-subtitle').textContent = 'Fill out article details below to publish directly onto Icons of Tech.';
+      document.getElementById('submit-btn-text').textContent = 'Publish Article Now';
+      document.getElementById('reset-form-btn').classList.add('hidden');
+    }
+
+    // Delete Modal Actions
+    function openDeleteModal(id, title) {
+      pendingDeleteId = id;
+      document.getElementById('delete-modal-text').textContent = `Are you sure you want to delete "${title}"? This will permanently remove it from the magazine.`;
+
+      const modal = document.getElementById('delete-modal');
+      const panel = document.getElementById('delete-modal-panel');
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      panel.classList.remove('scale-95');
+      panel.classList.add('scale-100');
+    }
+
+    function closeDeleteModal() {
+      pendingDeleteId = null;
+      const modal = document.getElementById('delete-modal');
+      const panel = document.getElementById('delete-modal-panel');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+      panel.classList.remove('scale-100');
+      panel.classList.add('scale-95');
+    }
+
+    document.getElementById('confirm-delete-btn')?.addEventListener('click', () => {
+      if (!pendingDeleteId) return;
+
+      const deleteId = pendingDeleteId;
+
+      // 1. Add to deleted IDs array in localStorage
+      const deletedIds = JSON.parse(localStorage.getItem('iot_deleted_article_ids') || '[]');
+      if (!deletedIds.includes(deleteId)) {
+        deletedIds.push(deleteId);
+        localStorage.setItem('iot_deleted_article_ids', JSON.stringify(deletedIds));
+      }
+
+      // 2. Remove from custom articles in localStorage if present
+      const savedCustom = JSON.parse(localStorage.getItem('iot_custom_articles') || '[]');
+      const filteredCustom = savedCustom.filter(a => a.id !== deleteId);
+      localStorage.setItem('iot_custom_articles', JSON.stringify(filteredCustom));
+
+      // 3. Send delete command to Google Sheets if configured
+      if (typeof GOOGLE_SHEETS_API_URL !== 'undefined' && GOOGLE_SHEETS_API_URL) {
+        fetch(GOOGLE_SHEETS_API_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({ action: 'delete', id: deleteId })
+        }).catch(err => console.log('Google Sheets delete offline:', err));
+      }
+
+      closeDeleteModal();
+      showToast('🗑️ Article deleted successfully!');
+
+      // If we were currently editing this article, reset form
+      if (document.getElementById('editing-article-id').value === deleteId) {
+        resetFormToCreateMode();
+      }
+
+      // Refresh management list
+      renderArticlesManagerList();
+    });
+
+    // Form Submit (Create or Update)
+    const form = document.getElementById('standalone-publish-form');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      let heroImage = document.getElementById('pub-hero').value.trim();
+      const fileInput = document.getElementById('pub-hero-file');
+      const submitBtn = document.getElementById('submit-btn');
+
+      // Standard robust pipeline for saving physical files to the local /images directory
+      if (fileInput && fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        try {
+           showToast('⏳ Uploading image to local server...');
+           submitBtn.disabled = true;
+           
+           const base64Str = await new Promise((resolve, reject) => {
+             const reader = new FileReader();
+             reader.onload = () => resolve(reader.result);
+             reader.onerror = error => reject(error);
+             reader.readAsDataURL(file);
+           });
+           
+           // Transmit to the Node.js backend to securely dump the payload as a raw binary picture!
+           const uploadRes = await fetch('http://localhost:3000/upload', {
+             method: 'POST',
+             headers: { 'Content-Type': 'application/json' },
+             body: JSON.stringify({ filename: file.name, imageBase64: base64Str })
+           }).then(r => r.json());
+           
+           if (uploadRes.success) {
+             heroImage = uploadRes.path; // Strictly pushes exactly like 'images/yourpicture.jpg'
+             showToast('✓ Image saved physically to disk!');
+           } else {
+             throw new Error(uploadRes.error || 'Server rejected file.');
+           }
+           
+        } catch(err) {
+           showToast('❌ Failed to upload image! Is Node server running?');
+           console.error(err);
+           submitBtn.disabled = false;
+           return; 
+        }
+      }
+
+      const editingId = document.getElementById('editing-article-id').value;
+      const title = document.getElementById('pub-title').value.trim();
+      const subtitle = document.getElementById('pub-subtitle').value.trim();
+      const category = document.getElementById('pub-category').value;
+      const author = document.getElementById('pub-author').value.trim();
+      const readTime = document.getElementById('pub-readtime').value.trim() || '3 min read';
+      const rawContent = document.getElementById('pub-content').value.trim();
+      const rawTags = document.getElementById('pub-tags').value.trim();
+
+      const isFeatured = document.getElementById('pub-featured').checked;
+      const isCoverStory = document.getElementById('pub-cover').checked;
+
+      if (!title || !subtitle || !author || !rawContent) {
+        showToast('Please fill out all required fields');
+        submitBtn.disabled = false;
+        return;
+      }
+
+      // Process Paragraphs
+      const paragraphs = rawContent.split(/\n\s*\n/).map(p => p.trim()).filter(p => p.length > 0);
+
+      // Process Tags
+      const tags = rawTags ? rawTags.split(',').map(t => t.trim().toLowerCase().replace(/^#/, '')).filter(Boolean) : [category.toLowerCase()];
+
+      // Date string
+      const today = new Date();
+      const dateStr = today.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+      // Article ID
+      let articleId = editingId;
+      if (!articleId) {
+        const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        articleId = `pub-${slug}-${Date.now().toString().slice(-4)}`;
+      }
+
+      const articleObj = {
+        id: articleId,
+        title,
+        subtitle,
+        category,
+        isCoverStory,
+        isFeatured,
+        author,
+        date: dateStr,
+        readTime,
+        tags,
+        heroImage,
+        excerpt: subtitle,
+        content: paragraphs
+      };
+
+      // Save to localStorage custom articles
+      const savedCustom = JSON.parse(localStorage.getItem('iot_custom_articles') || '[]');
+
+      // If cover story, reset cover story flag on other custom articles
+      if (isCoverStory) {
+        savedCustom.forEach(a => a.isCoverStory = false);
+      }
+
+      const existingIdx = savedCustom.findIndex(a => a.id === articleId);
+      if (existingIdx > -1) {
+        savedCustom[existingIdx] = articleObj;
+      } else {
+        savedCustom.unshift(articleObj);
+      }
+
+      // If it was in deletedIds, remove it
+      const deletedIds = JSON.parse(localStorage.getItem('iot_deleted_article_ids') || '[]');
+      const newDeletedIds = deletedIds.filter(id => id !== articleId);
+      localStorage.setItem('iot_deleted_article_ids', JSON.stringify(newDeletedIds));
+
+      localStorage.setItem('iot_custom_articles', JSON.stringify(savedCustom));
+
+      // Post to Google Sheets Cloud Database if URL configured
+      if (typeof GOOGLE_SHEETS_API_URL !== 'undefined' && GOOGLE_SHEETS_API_URL) {
+        fetch(GOOGLE_SHEETS_API_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify(articleObj)
+        }).then(() => console.log('✓ Article sent to Google Sheets'))
+          .catch(err => console.log('Google Sheets submit offline:', err));
+      }
+
+      showToast(editingId ? '✓ Article updated successfully! Redirecting...' : '✓ Article published successfully! Redirecting...');
+
+      // Redirect to main website with updated/created article
+      setTimeout(() => {
+        window.location.href = `index.html#article/${articleId}`;
+      }, 1000);
+    });
+
+    function showToast(message) {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.textContent = message;
+
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // Initialize list on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      renderArticlesManagerList();
+    });
+  </script>
+</body>
+
+</html>

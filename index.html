@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Icons of Tech | Digital Magazine</title>
+  <meta name="description"
+    content="Icons of Tech — a digital magazine about AI, film, tech, ambition, culture, interviews and business. Stories for the people building the next era." />
+  <meta name="theme-color" content="#000000" />
+
+  <!-- Open Graph / Social -->
+  <meta property="og:title" content="Icons of Tech | Digital Magazine" />
+  <meta property="og:description"
+    content="Stories for the people building the next era. AI, film, tech, ambition, culture, interviews, business." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Icons of Tech | Digital Magazine" />
+  <meta name="twitter:description" content="Stories for the people building the next era." />
+
+  <!-- Google Fonts: Newsreader (Editorial Serif) & Inter (Clean UI Sans) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:ital,opsz,wght@0,6..72,200..700;1,6..72,200..700&family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&display=swap"
+    rel="stylesheet" />
+
+  <!-- Favicon & Icons -->
+  <link rel="icon" href="brand/iot-logo.png" type="image/png" />
+  <link rel="apple-touch-icon" href="brand/iot-logo.png" />
+
+  <!-- Vanilla CSS Stylesheet -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body class="bg-paper text-ink antialiased">
+
+  <!-- Reading Progress Bar (visible on Article page) -->
+  <div id="read-progress" class="read-progress-bar"></div>
+
+  <!-- Announcement / Issue Bar -->
+  <div style="background-color: #000000; color: #ffffff;"
+    class="py-2.5 px-4 font-ui tracking-widest uppercase w-full relative z-50">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between w-full gap-2 sm:gap-0">
+      <span class="flex-1 text-left font-semibold text-[10px] sm:text-xs" id="top-date-display">TUESDAY, AUGUST 4,
+        2026</span>
+
+
+      <span class="flex-1 text-right font-semibold text-[10px] sm:text-xs">VOL. I · NO. 1 · JUNE 2026</span>
+
+      <a href="#about"
+        class="flex-[1.5] text-center font-bold text-xs sm:text-sm hover:text-editorial hover:underline underline-offset-4 transition-all">ABOUT
+        THE MAGAZINE</a>
+
+    </div>
+  </div>
+
+  <!-- Main Sticky Header -->
+  <header class="sticky top-10 z-10 bg-paper/95 backdrop-blur border-b border-ink-5 transition-all w-full pt-6"
+    id="main-header">
+    <div class="max-w-7xl mx-auto px-6 sm:px-12 lg:px-16">
+      <div class="flex items-center justify-between h-20">
+
+        <!-- Left: Mobile Menu & Magazine Branding Logo -->
+        <div class="flex items-center gap-4">
+          <button id="mobile-menu-btn" class="sm:hidden p-2 -ml-2 text-ink hover:text-editorial transition-colors"
+            aria-label="Toggle navigation menu">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+
+          <a href="#" class="brand-logo group flex items-center">
+            <img src="brand/iot-logo.png" alt="Icons of Tech Logo" class="h-16 sm:h-12 w-auto object-contain" />
+          </a>
+        </div>
+
+        <!-- Right: Search & Action Buttons -->
+        <div class="flex items-start gap-4">
+          <button id="open-search-btn"
+            class="p-2 text-ink-70 hover:text-ink transition-colors flex items-center cursor-pointer"
+            title="Search Articles (Press /)">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          </button>
+
+          <a href="#newsletter-section" style="border-radius: 0;"
+            class="btn-subscribe font-ui text-[10px] font-bold uppercase tracking-[0.2em] bg-ink text-paper px-6 py-3 hover:bg-editorial transition-all shadow-sm">
+            Subscribe
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Categories Sub-navigation -->
+    <div class="w-full border-t border-editorial">
+      <div class="max-w-7xl mx-auto px-6 sm:px-12 lg:px-16">
+        <nav
+          class="py-4 overflow-x-auto no-scrollbar scroll-smooth flex items-center justify-start gap-6 sm:gap-10 md:gap-12"
+          id="category-nav">
+          <!-- Dynamic Category Links injected here -->
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer Overlay -->
+  <div id="mobile-drawer"
+    class="fixed inset-0 z-50 bg-ink/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+    <div
+      class="fixed inset-y-0 left-0 w-4/5 max-w-xs bg-paper shadow-2xl p-6 flex flex-col justify-between transform -translate-x-full transition-transform duration-300"
+      id="mobile-drawer-panel">
+      <div>
+        <div class="flex items-center justify-between pb-6 border-b border-ink-10">
+          <span class="font-ui font-black text-xl text-ink">ICONS <em
+              class="font-serif italic font-normal text-editorial">of</em> TECH</span>
+          <button id="close-drawer-btn" class="p-2 text-ink hover:text-editorial cursor-pointer">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        <div class="py-6 flex flex-col gap-4 font-ui text-sm font-semibold uppercase tracking-widest"
+          id="mobile-cat-links">
+          <!-- Mobile Links injected here -->
+        </div>
+      </div>
+
+      <div class="border-t border-ink-10 pt-6 space-y-3">
+        <a href="#about" class="block font-ui text-xs uppercase tracking-wider text-ink-70 hover:text-editorial">About
+          the Magazine</a>
+
+        <div class="text-xs text-ink-40 font-ui pt-4">© 2026 Icons of Tech</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Modal Overlay -->
+  <div id="search-modal"
+    class="fixed inset-0 z-50 bg-ink/60 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300 flex items-start justify-center pt-16 sm:pt-24 px-4">
+    <div
+      class="bg-paper w-full max-w-2xl rounded-xl shadow-2xl overflow-hidden border border-ink-15 transform scale-95 transition-transform duration-300"
+      id="search-modal-content">
+      <div class="p-4 border-b border-ink-10 flex items-center gap-3">
+        <svg class="w-5 h-5 text-ink-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        <input type="text" id="search-input" placeholder="Search by title, topic, author or keyword..."
+          class="w-full bg-transparent font-serif text-lg text-ink focus:outline-none placeholder-ink-40" />
+        <button id="close-search-btn" class="p-1 text-ink-40 hover:text-ink cursor-pointer">
+          <kbd class="text-xs font-mono bg-ink-10 px-2 py-1 rounded">ESC</kbd>
+        </button>
+      </div>
+
+      <div class="max-h-[60vh] overflow-y-auto p-4 space-y-3" id="search-results">
+        <div class="text-center py-8 text-ink-50 font-serif italic">Type to begin searching the archives...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN APP CONTAINER -->
+  <main id="app-container" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 transition-opacity duration-200">
+    <!-- Dynamic View Content will be injected here via app.js -->
+  </main>
+
+  <!-- NEWSLETTER / DISPATCH SECTION -->
+  <section id="newsletter-section"
+    class="bg-ink px-6 sm:px-12 lg:px-16 border-t border-ink-15 flex flex-col justify-center"
+    style="padding-top: 7rem; padding-bottom: 7rem; background-color: #121212;">
+    <div class="w-full max-w-8xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24 items-center"
+      style="padding-left: 20rem; padding-right: 20rem; justify-content: center;">
+
+      <!-- Left Column text -->
+      <div class="text-left w-full pr-0 md:pr-10">
+        <span class="font-ui text-[16px] uppercase tracking-[0.25em] text-chrome font-bold block mb-4">THE
+          DISPATCH</span>
+        <h2 class="font-serif text-4xl sm:text-5xl lg:text-[44px] font-normal text-white mb-5"
+          style="line-height: 1.15; color: #f8f9fa;">
+          The week's best stories on AI, film, tech, and the people building the next era.
+        </h2>
+        <p class="font-serif text-[17px] italic" style="color: #a1a1aa;">
+          One email. Monday morning. No filler.
+        </p>
+      </div>
+
+      <!-- Right Column Form -->
+      <div class="flex flex-col justify-center w-full max-w-md mx-auto md:ml-auto md:mr-0 pl-0 md:pl-6 space-y-4">
+        <label for="subscribe-email" class="block font-ui text-[10px] uppercase tracking-[0.15em] text-left"
+          style="color: #a1a1aa;">YOUR EMAIL</label>
+        <form id="subscribe-form" class="flex flex-row items-stretch w-full" style="border: 1px solid #ffffff;">
+          <input type="email" id="subscribe-email" placeholder="you@studio.com" required
+            class="flex-grow px-5 py-3.5 text-[15px] font-serif text-white focus:outline-none text-left"
+            style="border: none; background-color: black;" />
+          <button type="submit"
+            class="hover:bg-pink bg-chrome text-ink font-ui text-[12px] uppercase tracking-[0.20em] font-regular px-8 py-3.5 transition-colors duration-300 cursor-pointer whitespace-nowrap"
+            style="border: none; outline: none; margin: 0;">
+            SUBSCRIBE
+          </button>
+        </form>
+        <div class="font-ui text-[10px] uppercase tracking-[0.15em] text-left" style="color: #a1a1aa;">
+          FREE. UNSUBSCRIBE ANYTIME.
+        </div>
+        <div id="subscribe-success" class="hidden text-sm font-ui text-chrome font-semibold animate-fade-in text-left">
+          ✓ Thank you for subscribing to The Dispatch! Check your inbox this Monday.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-paper text-ink border-t border-ink-10 pt-16 pb-12 px-6 lg:px-8 text-left">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-y-16 lg:gap-x-8 mb-24"
+      style="padding-bottom: 5rem;">
+
+      <!-- Col 1: Brand Info -->
+      <div class="md:col-span-8 space-y-10 pr-4">
+        <a href="#" class="block font-serif font-bold text-ink hover:opacity-80 transition-opacity pt-1"
+          style="font-size: 28px; letter-spacing: -0.02em; line-height: 1;">
+          ICONS <span class="italic text-chrome font-bold"
+            style="font-size: 20px; margin: 0 -2px; color: #f7c305;">of</span> TECH
+        </a>
+        <p class="font-serif italic text-ink-60 leading-relaxed"
+          style="font-size: 16px; max-width: 320px; padding-top: 10px;">
+          A monthly magazine about the people, ideas, and aesthetics shaping the next decade of technology and culture.
+        </p>
+      </div>
+
+      <!-- Col 2: Categories -->
+      <div class="md:col-span-2 space-y-8">
+        <h4 class="font-ui text-[12px] uppercase tracking-[0.25em] font-semibold text-ink-60">Sections</h4>
+        <ul class="space-y-6 font-serif text-[16px] text-ink-80 list-none" id="footer-categories-list">
+          <!-- Footer category links injected here -->
+        </ul>
+      </div>
+
+      <!-- Col 3: Inside -->
+      <div class="md:col-span-3 space-y-8">
+        <h4 class="font-ui text-[12px] uppercase tracking-[0.25em] font-semibold text-ink-50">Inside</h4>
+        <ul class="space-y-6 font-serif text-[16px] text-ink-80 list-none">
+          <li><a href="#about"
+              class="hover:text-ink hover:underline underline-offset-4 decoration-ink decoration-1 transition-all">About
+              the Magazine</a></li>
+          <li><a href="#newsletter-section"
+              class="hover:text-ink hover:underline underline-offset-4 decoration-ink decoration-1 transition-all">Subscribe</a>
+          </li>
+          <li><a href="mailto:techiconsofus@gmail.com"
+              class="hover:text-ink hover:underline underline-offset-4 decoration-ink decoration-1 transition-all">Pitch
+              a Story</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div
+      class="max-w-7xl mx-auto uppercase pt-8 mt-12 relative flex flex-col sm:flex-row items-center justify-between font-ui text-[12px] tracking-[0.2em] text-ink-50 gap-4">
+      <!-- Full Bleed Top Border -->
+      <div class="absolute top-0"
+        style="left: 50%; transform: translateX(-50%); width: 100vw; border-top: 1px solid var(--color-ink-10);"></div>
+
+      <div>© 2026 ICONS OF TECH</div>
+      <div>PUBLISHED IN PRINT & PIXELS</div>
+    </div>
+  </footer>
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- JavaScript -->
+  <script src="app.js"></script>
+</body>
+
+</html>
