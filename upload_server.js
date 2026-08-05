@@ -23,7 +23,7 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  // Handle the /upload endpoint
+  // Handle the /upload endpoint (Functions as a transparent GitHub proxy)
   if (req.method === 'POST' && req.url === '/upload') {
     let body = '';
     
@@ -36,40 +36,69 @@ const server = http.createServer((req, res) => {
     req.on('end', () => {
       try {
         const payload = JSON.parse(body);
-        const { filename, imageBase64 } = payload;
+        const { filename, imageBase64, githubRepo, githubToken } = payload;
         
-        if (!filename || !imageBase64) {
+        if (!filename || !imageBase64 || !githubRepo || !githubToken) {
           res.writeHead(400, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ success: false, error: 'Missing filename or base64 data' }));
+          res.end(JSON.stringify({ success: false, error: 'Missing github integration configuration or file data' }));
           return;
         }
 
-        // The base64 string usually comes with a prefix like "data:image/jpeg;base64,"
-        // We need to strip this off before dumping it into a binary file
         const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, "");
-        
-        // Clean filename and attach timestamp to prevent caching collisions
         const safeFilename = Date.now() + '_' + filename.replace(/[^a-zA-Z0-9.\-_]/g, '');
-        const filePath = path.join(IMAGES_DIR, safeFilename);
-
-        // Write file safely
-        fs.writeFile(filePath, base64Data, 'base64', (err) => {
-          if (err) {
-            console.error('File write error:', err);
-            res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ success: false, error: 'Failed to write file' }));
-          } else {
-            console.log(`Saved new image: ${safeFilename}`);
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            // Return relative path for HTML/CSS to resolve securely
-            res.end(JSON.stringify({ success: true, path: `images/${safeFilename}` }));
+        
+        // Use Node's built-in https module to natively bypass all browser security blocks!
+        const https = require('https');
+        const ghPath = `/repos/${githubRepo}/contents/images/${safeFilename}`;
+        
+        const options = {
+          hostname: 'api.github.com',
+          port: 443,
+          path: ghPath,
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${githubToken}`,
+            'Content-Type': 'application/json',
+            'User-Agent': 'Node-Local-Proxy',
+            'Accept': 'application/vnd.github.v3+json'
           }
+        };
+
+        const ghReq = https.request(options, (ghRes) => {
+          let ghData = '';
+          ghRes.on('data', (d) => { ghData += d; });
+          ghRes.on('end', () => {
+            if (ghRes.statusCode >= 200 && ghRes.statusCode < 300) {
+              const result = JSON.parse(ghData);
+              console.log(`Success! Proxy pushed image natively to GitHub Repository!`);
+              res.writeHead(200, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({ success: true, path: result.content.path }));
+            } else {
+              console.error(`GitHub API Rejected: ${ghData}`);
+              res.writeHead(400, { 'Content-Type': 'application/json' });
+              const err = JSON.parse(ghData);
+              res.end(JSON.stringify({ success: false, error: err.message || 'GitHub Repo or Token invalid' }));
+            }
+          });
         });
+
+        ghReq.on('error', (error) => {
+          console.error(error);
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ success: false, error: 'Node pipeline network crash' }));
+        });
+
+        // Fire payload natively
+        ghReq.write(JSON.stringify({
+          message: `Auto-upload: Added hero image for new magazine article`,
+          content: base64Data
+        }));
+        ghReq.end();
 
       } catch (err) {
         console.error('JSON Parse error:', err);
         res.writeHead(400, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ success: false, error: 'Invalid JSON payload' }));
+        res.end(JSON.stringify({ success: false, error: 'Invalid proxy payload format' }));
       }
     });
   } else {

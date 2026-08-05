@@ -24,7 +24,7 @@
   <!-- Issue Bar -->
   <div
     class="border-b border-ink-10 bg-paper-dark py-2 px-4 text-xs font-ui tracking-wider text-ink-60 text-center flex items-center justify-between">
-    <a href="home.html" class="hover:text-editorial transition-colors flex items-center gap-1 font-medium">
+    <a href="index.html" class="hover:text-editorial transition-colors flex items-center gap-1 font-medium">
       ← Return to Icons of Tech Magazine
     </a>
     <span class="font-semibold text-editorial uppercase tracking-widest hidden sm:inline">CMS Publisher & Content
@@ -47,7 +47,7 @@
       <div class="flex items-center justify-between h-20">
 
         <div class="flex items-center gap-4">
-          <a href="home.html"
+          <a href="index.html"
             class="font-ui text-xs font-semibold uppercase tracking-wider text-ink-70 hover:text-editorial transition-colors flex items-center gap-1">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
@@ -58,7 +58,7 @@
         </div>
 
         <!-- Center Brand Logo -->
-        <a href="home.html" class="brand-logo group flex items-center gap-1.5 text-center">
+        <a href="index.html" class="brand-logo group flex items-center gap-1.5 text-center">
           <span class="font-ui font-black text-2xl sm:text-3xl tracking-tight text-ink">ICONS</span>
           <span
             class="font-serif italic font-normal text-xl sm:text-2xl text-chrome-dark group-hover:text-editorial transition-colors px-0.5">of</span>
@@ -548,7 +548,7 @@
             </button>
 
             <a 
-              href="home.html#article/${article.id}" 
+              href="index.html#article/${article.id}" 
               target="_blank"
               class="border border-ink-20 hover:border-ink text-ink font-ui text-xs font-semibold uppercase tracking-wider px-3.5 py-2 rounded-lg transition-colors flex items-center gap-1"
               title="View Article Live"
@@ -681,7 +681,9 @@
       if (fileInput && fileInput.files.length > 0) {
         const file = fileInput.files[0];
         const ghRepo = document.getElementById('gh-repo').value.trim();
-        const ghToken = document.getElementById('gh-token').value.trim();
+        // Aggressively strip ALL whitespace (including hidden \n or \r carriage returns) 
+        // to prevent fatal HTTP browser-level Network CORS crashing!
+        const ghToken = document.getElementById('gh-token').value.replace(/\s/g, '');
 
         if (!ghRepo || !ghToken) {
            showToast('❌ Missing GitHub Repo or Token! Check credentials box.');
@@ -707,26 +709,29 @@
            // GitHub API demands strict Base64 encoding without standard browser data prefixes
            const cleanBase64 = base64Raw.replace(/^data:image\/\w+;base64,/, "");
            const filename = Date.now() + '_' + file.name.replace(/[^a-zA-Z0-9.\-_]/g, '');
-           const ghApiUrl = `https://api.github.com/repos/${ghRepo}/contents/images/${filename}`;
            
-           const uploadRes = await fetch(ghApiUrl, {
-             method: 'PUT',
-             headers: {
-               'Authorization': `Bearer ${ghToken}`,
-               'Content-Type': 'application/json',
-             },
-             body: JSON.stringify({
-               message: `Auto-upload: Added hero image for new magazine article`,
-               content: cleanBase64
-             })
-           }).then(r => r.json());
+           // Forcefully sanitize the repository string so if they pasted 'https://github.com/owner/repo', it securely strips it down to 'owner/repo'.
+           // A fatal malformed URI here explicitly causes API servers to aggressively kill the socket, resulting in 'Failed to fetch'.
+           let cleanGhRepo = ghRepo.replace('https://github.com/', '').replace('http://github.com/', '').replace('github.com/', '').trim();
+           if(cleanGhRepo.endsWith('/')) { cleanGhRepo = cleanGhRepo.slice(0, -1); }
            
-           if (uploadRes.content && uploadRes.content.path) {
-             heroImage = uploadRes.content.path; // Commits exactly as e.g. "images/128371_file.jpg"
-             showToast('✓ Image pushed physically to GitHub Repository!');
-           } else {
-             throw new Error(uploadRes.message || 'GitHub Repo or Token rejected processing.');
-           }
+           const uploadRes = await fetch('http://localhost:3000/upload', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                filename: file.name,
+                imageBase64: base64Raw,
+                githubRepo: cleanGhRepo,
+                githubToken: ghToken
+              })
+            }).then(r => r.json());
+
+            if (uploadRes.success && uploadRes.path) {
+              heroImage = uploadRes.path; // Set exact commit path
+              showToast('✓ Proxy pushed image directly to GitHub API!');
+            } else {
+              throw new Error(uploadRes.message || 'GitHub Repo or Token rejected processing.');
+            }
            
         } catch(err) {
            showToast('❌ GitHub API Error: ' + err.message);
@@ -824,7 +829,7 @@
 
       // Redirect to main website with updated/created article
       setTimeout(() => {
-        window.location.href = `home.html#article/${articleId}`;
+        window.location.href = `index.html#article/${articleId}`;
       }, 1000);
     });
 
