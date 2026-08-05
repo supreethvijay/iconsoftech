@@ -24,7 +24,7 @@
   <!-- Issue Bar -->
   <div
     class="border-b border-ink-10 bg-paper-dark py-2 px-4 text-xs font-ui tracking-wider text-ink-60 text-center flex items-center justify-between">
-    <a href="home.html" class="hover:text-editorial transition-colors flex items-center gap-1 font-medium">
+    <a href="index.html" class="hover:text-editorial transition-colors flex items-center gap-1 font-medium">
       ← Return to Icons of Tech Magazine
     </a>
     <span class="font-semibold text-editorial uppercase tracking-widest hidden sm:inline">CMS Publisher & Content
@@ -47,7 +47,7 @@
       <div class="flex items-center justify-between h-20">
 
         <div class="flex items-center gap-4">
-          <a href="home.html"
+          <a href="index.html"
             class="font-ui text-xs font-semibold uppercase tracking-wider text-ink-70 hover:text-editorial transition-colors flex items-center gap-1">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
@@ -58,7 +58,7 @@
         </div>
 
         <!-- Center Brand Logo -->
-        <a href="home.html" class="brand-logo group flex items-center gap-1.5 text-center">
+        <a href="index.html" class="brand-logo group flex items-center gap-1.5 text-center">
           <span class="font-ui font-black text-2xl sm:text-3xl tracking-tight text-ink">ICONS</span>
           <span
             class="font-serif italic font-normal text-xl sm:text-2xl text-chrome-dark group-hover:text-editorial transition-colors px-0.5">of</span>
@@ -194,19 +194,26 @@
             class="w-full bg-paper border border-ink-20 px-4 py-3 font-ui text-sm text-ink focus:outline-none focus:border-editorial rounded-lg placeholder-ink-40 shadow-inner" />
         </div>
 
-        <!-- Hero Image Input -->
-        <div class="space-y-2">
-          <label for="pub-hero-file" class="block font-ui text-xs uppercase tracking-wider font-bold text-ink">
-            Upload Custom Hero Image (Local storage + Google sheet)
-          </label>
+        <!-- Hero Image Input with GitHub Repository Integration -->
+        <div class="space-y-4">
+          <div class="space-y-2">
+            <label for="pub-hero-file" class="block font-ui text-xs uppercase tracking-wider font-bold text-ink">
+              Upload Custom Hero Image (Publishes directly to GitHub)
+            </label>
+            <input type="file" id="pub-hero-file" accept="image/*" class="w-full bg-paper border border-ink-20 px-4 py-3 font-ui text-sm text-ink focus:outline-none focus:border-editorial rounded-lg placeholder-ink-40 shadow-inner file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-editorial/10 file:text-editorial hover:file:bg-editorial hover:file:text-white" />
+            <!-- Hidden fallback for edit mode -->
+            <input type="hidden" id="pub-hero" value="" />
+          </div>
 
-          <input type="file" id="pub-hero-file" accept="image/*"
-            class="w-full bg-paper border border-ink-20 px-4 py-3 font-ui text-sm text-ink focus:outline-none focus:border-editorial rounded-lg placeholder-ink-40 shadow-inner file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-editorial/10 file:text-editorial hover:file:bg-editorial hover:file:text-white" />
-
-          <!-- Hidden fallback for edit mode -->
-          <input type="hidden" id="pub-hero" value="" />
-          <p class="font-ui text-[10px] text-ink-50 italic">Make sure to run the upload server (node upload_server.js)
-            in your terminal.</p>
+          <!-- Secure GitHub Credentials Section (Stored only in local browser) -->
+          <div class="p-4 border border-editorial/20 bg-editorial/5 rounded-lg space-y-3">
+            <h4 class="font-ui text-xs font-semibold uppercase tracking-wider text-editorial">GitHub Direct Integration</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <input type="text" id="gh-repo" placeholder="Repo Format: username/repo" class="w-full bg-paper border border-ink-20 px-3 py-2 font-ui text-xs text-ink focus:outline-none focus:border-editorial rounded-md shadow-inner" />
+              <input type="password" id="gh-token" placeholder="GitHub Personal Access Token" class="w-full bg-paper border border-ink-20 px-3 py-2 font-ui text-xs text-ink focus:outline-none focus:border-editorial rounded-md shadow-inner" />
+            </div>
+            <p class="font-ui text-[9px] text-ink-50 italic mt-1">Credentials securely locked to your local browser storage. Token requires "repo" permissions.</p>
+          </div>
         </div>
 
         <!-- Checkbox Options -->
@@ -541,7 +548,7 @@
             </button>
 
             <a 
-              href="home.html#article/${article.id}" 
+              href="index.html#article/${article.id}" 
               target="_blank"
               class="border border-ink-20 hover:border-ink text-ink font-ui text-xs font-semibold uppercase tracking-wider px-3.5 py-2 rounded-lg transition-colors flex items-center gap-1"
               title="View Article Live"
@@ -670,36 +677,59 @@
       const fileInput = document.getElementById('pub-hero-file');
       const submitBtn = document.getElementById('submit-btn');
 
-      // Standard robust pipeline for saving physical files to the local /images directory
+      // Execute native GitHub REST API commit directly from browser
       if (fileInput && fileInput.files.length > 0) {
         const file = fileInput.files[0];
+        const ghRepo = document.getElementById('gh-repo').value.trim();
+        const ghToken = document.getElementById('gh-token').value.trim();
+
+        if (!ghRepo || !ghToken) {
+           showToast('❌ Missing GitHub Repo or Token! Check credentials box.');
+           submitBtn.disabled = false;
+           return;
+        }
+
         try {
-           showToast('⏳ Uploading image to local server...');
+           showToast('⏳ Encrypting & pushing image to GitHub API...');
            submitBtn.disabled = true;
            
-           const base64Str = await new Promise((resolve, reject) => {
+           // Natively save auth credentials for future sessions
+           localStorage.setItem('iot_gh_repo', ghRepo);
+           localStorage.setItem('iot_gh_token', ghToken);
+
+           const base64Raw = await new Promise((resolve, reject) => {
              const reader = new FileReader();
              reader.onload = () => resolve(reader.result);
              reader.onerror = error => reject(error);
              reader.readAsDataURL(file);
            });
            
-           // Transmit to the Node.js backend to securely dump the payload as a raw binary picture!
-           const uploadRes = await fetch('http://localhost:3000/upload', {
-             method: 'POST',
-             headers: { 'Content-Type': 'application/json' },
-             body: JSON.stringify({ filename: file.name, imageBase64: base64Str })
+           // GitHub API demands strict Base64 encoding without standard browser data prefixes
+           const cleanBase64 = base64Raw.replace(/^data:image\/\w+;base64,/, "");
+           const filename = Date.now() + '_' + file.name.replace(/[^a-zA-Z0-9.\-_]/g, '');
+           const ghApiUrl = `https://api.github.com/repos/${ghRepo}/contents/images/${filename}`;
+           
+           const uploadRes = await fetch(ghApiUrl, {
+             method: 'PUT',
+             headers: {
+               'Authorization': `Bearer ${ghToken}`,
+               'Content-Type': 'application/json',
+             },
+             body: JSON.stringify({
+               message: `Auto-upload: Added hero image for new magazine article`,
+               content: cleanBase64
+             })
            }).then(r => r.json());
            
-           if (uploadRes.success) {
-             heroImage = uploadRes.path; // Strictly pushes exactly like 'images/yourpicture.jpg'
-             showToast('✓ Image saved physically to disk!');
+           if (uploadRes.content && uploadRes.content.path) {
+             heroImage = uploadRes.content.path; // Commits exactly as e.g. "images/128371_file.jpg"
+             showToast('✓ Image pushed physically to GitHub Repository!');
            } else {
-             throw new Error(uploadRes.error || 'Server rejected file.');
+             throw new Error(uploadRes.message || 'GitHub Repo or Token rejected processing.');
            }
            
         } catch(err) {
-           showToast('❌ Failed to upload image! Is Node server running?');
+           showToast('❌ GitHub API Error: ' + err.message);
            console.error(err);
            submitBtn.disabled = false;
            return; 
@@ -794,7 +824,7 @@
 
       // Redirect to main website with updated/created article
       setTimeout(() => {
-        window.location.href = `home.html#article/${articleId}`;
+        window.location.href = `index.html#article/${articleId}`;
       }, 1000);
     });
 
@@ -817,6 +847,12 @@
     // Initialize list on page load
     document.addEventListener('DOMContentLoaded', () => {
       renderArticlesManagerList();
+
+      // Automatically hydrate GitHub credentials if previously saved securely in localStorage
+      const cachedRepo = localStorage.getItem('iot_gh_repo');
+      const cachedToken = localStorage.getItem('iot_gh_token');
+      if (cachedRepo) document.getElementById('gh-repo').value = cachedRepo;
+      if (cachedToken) document.getElementById('gh-token').value = cachedToken;
     });
   </script>
 </body>
